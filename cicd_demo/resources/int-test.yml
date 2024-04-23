@@ -12,6 +12,7 @@ resources:
         - task_key: Streaming_Agg
           notebook_task:
             notebook_path: ../StreamingAggNotebook.py
+          existing_cluster_id: 1118-013127-82wynr8t
 
       queue:
         enabled: true
