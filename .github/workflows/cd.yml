@@ -1,0 +1,33 @@
+name: CD
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - 'main'
+
+defaults:
+  run:
+    working-directory: ./cicd_demo
+
+env:
+  DATABRICKS_TOKEN: ${{ secrets.QA_DATABRICKS_TOKEN }}
+
+jobs:
+  prod:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      - uses: databricks/setup-cli@main
+      - name: Validate
+        id: validate
+        run: |
+          databricks bundle validate -t qa
+      - name: Deploy
+        id: deploy
+        run: |
+          databricks bundle deploy -t qa
+      - name: Run Job
+        id: job_a
+        run: |
+          databricks bundle run job_a -t qa

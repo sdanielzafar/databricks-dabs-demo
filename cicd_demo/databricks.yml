@@ -1,0 +1,15 @@
+bundle:
+  name: cicd_demo
+
+include:
+  - ./resources/*.yml
+
+targets:
+  qa:
+    default: true
+    workspace:
+      host: https://e2-dogfood.staging.cloud.databricks.com/
+
+  prod:
+    workspace:
+      host: https://e2-dogfood.staging.cloud.databricks.com/

@@ -1,0 +1,76 @@
+name: CI
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+
+defaults:
+  run:
+    working-directory: ./cicd_demo/
+
+env:
+  QA_DATABRICKS_TOKEN: ${{ secrets.QA_DATABRICKS_TOKEN }}
+  PROD_DATABRICKS_TOKEN: ${{ secrets.PROD_DATABRICKS_TOKEN }}
+
+jobs:
+  unit_tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: Install dependencies
+        run: |
+            python -m pip install --upgrade pip
+            pip install -r requirements.txt
+      - name: Run tests with pytest
+        run: |
+            pytest
+
+  integration_tests:
+    needs: unit_tests
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+      - uses: databricks/setup-cli@main
+      - name: Validate
+        id: validate
+        env:
+          DATABRICKS_TOKEN: ${{ env.QA_DATABRICKS_TOKEN }}
+        run: |
+          databricks bundle validate -t qa
+      - name: Deploy Staging
+        id: deploy
+        env:
+          DATABRICKS_TOKEN: ${{ env.QA_DATABRICKS_TOKEN }}
+        run: |
+          databricks bundle deploy -t qa
+      - name: Run some tests
+        id: tests_1
+        env:
+          DATABRICKS_TOKEN: ${{ env.QA_DATABRICKS_TOKEN }}
+        run: |
+          databricks bundle run qa_test_1 -t qa
+      - name: Run other tests
+        id: tests_2
+        env:
+          DATABRICKS_TOKEN: ${{ env.QA_DATABRICKS_TOKEN }}
+        run: |
+          databricks bundle run qa_test_2 -t qa
+
+  prod_validation:
+    needs: integration_tests
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+      - uses: databricks/setup-cli@main
+      - name: Validate
+        id: validate
+        env:
+          DATABRICKS_TOKEN: ${{ env.PROD_DATABRICKS_TOKEN }}
+        run: |
+          databricks bundle validate -t prod

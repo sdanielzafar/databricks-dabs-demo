@@ -1,0 +1,17 @@
+# The main job for integration tests.
+resources:
+  jobs:
+    sample_project_job:
+      name: sample_project_job
+
+      email_notifications:
+        on_failure:
+          - dan.zafar@databricks.com
+
+      tasks:
+        - task_key: Streaming_Agg
+          notebook_task:
+            notebook_path: ../StreamingAggNotebook.py
+
+      queue:
+        enabled: true
