@@ -1,5 +1,5 @@
 # Databricks notebook source
-# MAGIC %md Sample notebook showing a spark streaming job
+# MAGIC %md # Sample notebook showing a spark streaming job
 
 # COMMAND ----------
 
