@@ -53,13 +53,7 @@ jobs:
         env:
           DATABRICKS_TOKEN: ${{ env.QA_DATABRICKS_TOKEN }}
         run: |
-          databricks bundle run qa_test_1 -t qa
-      - name: Run other tests
-        id: tests_2
-        env:
-          DATABRICKS_TOKEN: ${{ env.QA_DATABRICKS_TOKEN }}
-        run: |
-          databricks bundle run qa_test_2 -t qa
+          databricks bundle run sample_project_job -t qa
 
   prod_validation:
     needs: integration_tests
