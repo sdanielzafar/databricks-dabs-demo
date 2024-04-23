@@ -28,6 +28,6 @@ jobs:
         run: |
           databricks bundle deploy -t qa
       - name: Run Job
-        id: job_a
+        id: deploy-scheduled-job
         run: |
-          databricks bundle run job_a -t qa
+          databricks bundle run an-actual-job -t qa

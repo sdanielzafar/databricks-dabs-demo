@@ -1,18 +1,15 @@
-# The main job for integration tests.
 resources:
   jobs:
-    some-integration-test:
-      name: some-integration-test
-
-      email_notifications:
-        on_failure:
-          - dan.zafar@databricks.com
-
+    an-actual-job:
+      name: an-actual-job
+      schedule:
+        quartz_cron_expression: 3 0 8 * * ?
+        timezone_id: America/Los_Angeles
+        pause_status: PAUSED
       tasks:
         - task_key: Streaming_Agg
           notebook_task:
             notebook_path: ../StreamingAggNotebook.py
           existing_cluster_id: 1118-013127-82wynr8t
-
       queue:
         enabled: true
